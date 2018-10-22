@@ -1,0 +1,11 @@
+version: '2'
+services:
+  jenkins-teste:
+    image: jenkins/jenkins:2.138.1-slim
+    volumes:
+      - /devops/jenkins/jenkins-home:/var/jenkins_home
+    ports:
+      - 8880:8080
+
+  rsync:
+    image: instrumentisto/rsync-ssh
