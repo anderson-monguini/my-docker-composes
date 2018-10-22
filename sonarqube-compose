@@ -1,0 +1,46 @@
+version: "2"
+
+services:
+  postgresql:
+    image: orchardup/postgresql:9.3 #19/02/2018
+    restart: always
+    mem_limit: 2000M
+    volumes:
+      - /devops/sonarqube/postgresql:/var/lib/postgresql
+    environment:
+      - POSTGRESQL_USER=sonar
+      - POSTGRESQL_PASS=xaexohquaetiesoo
+
+  sonarqube:
+    image: sonarqube:6.5 #19/02/2018
+    restart: always
+    ports:
+      - "10000:9000"
+      - "9092:9092"
+    mem_limit: 6000M
+    volumes:
+      - /devops/sonarqube/opt/sonarqube/conf:/opt/sonarqube/conf
+      - /devops/sonarqube/opt/sonarqube/data:/opt/sonarqube/data
+      - /devops/sonarqube/opt/sonarqube/extensions:/opt/sonarqube/extensions
+    environment:
+      - SONARQUBE_JDBC_USERNAME=sonar
+      - SONARQUBE_JDBC_PASSWORD=xaexohquaetiesoo
+      - SONARQUBE_JDBC_URL=jdbc:postgresql://postgresql/docker
+
+  pgadmin:
+    image: dpage/pgadmin4
+    restart: always
+    mem_limit: 1000M
+    volumes:
+      - /usr/pgsql-9.5:/opt/pgsql
+      - /devops/sonarqube/pgadmin:/var/lib/pgadmin
+      - /usr/lib64/libpq.so.5:/usr/lib64/libpq.so.5
+      - /usr/lib64/libpq.so.5.5:/usr/lib64/libpq.so.5.5
+    environment:
+      - POSTGRESQL_HOME=/opt/pgsql
+      - PGADMIN_DEFAULT_EMAIL=pgadmin@telefonica.com
+      - PGADMIN_DEFAULT_PASSWORD=pg@dmin
+    ports:
+      - "8090:80"
+    links:
+      - postgresql:postgresql
