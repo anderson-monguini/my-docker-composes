@@ -1,0 +1,15 @@
+version: '2'
+
+services:
+ db:
+  image: mariadb
+  restart: always
+  volumes:
+    - /devops/mysql:/var/lib/mysql
+  environment:
+    MYSQL_ROOT_PASSWORD: root
+    MYSQL_USER: admin
+    MYSQL_PASSWORD: test
+    MYSQL_DATABASE: database
+  ports:
+    - 8806:3306
