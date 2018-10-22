@@ -1,0 +1,42 @@
+version: "2"
+
+services:
+ web:
+  image: 'gitlab/gitlab-ce'
+  restart: always
+  hostname: '10.129.227.46'
+  links:
+        - postgresql:postgresql
+  environment:
+    GITLAB_OMNIBUS_CONFIG: |
+      postgresql['enable'] = false
+      gitlab_rails['db_username'] = "gitlab"
+      gitlab_rails['db_password'] = "gitlab"
+      gitlab_rails['db_host'] = "postgresql"
+      gitlab_rails['db_port'] = "5432"
+      gitlab_rails['db_database'] = "gitlabhq_production"
+      gitlab_rails['db_adapter'] = 'postgresql'
+      gitlab_rails['db_encoding'] = 'utf8'
+      external_url 'http://10.129.227.46:9080/'
+      gitlab_rails['gitlab_shell_ssh_port'] = 2222
+  ports:
+    - '9080:9080'
+    - '2222:22'
+  extra_hosts:
+    - 'jenkins:10.129.181.142'
+  volumes:
+    - '/devops/gitlab/config:/etc/gitlab'
+    - '/devops/gitlab/logs:/var/log/gitlab'
+    - '/devops/gitlab/data:/var/opt/gitlab'
+  environment:
+    TZ: America/Sao_Paulo
+
+ postgresql:
+  restart: always
+  image: 'postgres:9.3-alpine'
+  environment:
+        - POSTGRES_USER=gitlab
+        - POSTGRES_PASSWORD=gitlab
+        - POSTGRES_DB=gitlabhq_production
+  volumes:
+        - /devops/postgres:/var/lib/postgresql:rw
